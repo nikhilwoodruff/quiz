@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { rounds } from "./data";
-import Link from "next/link";
+import { getImagePath, basePath } from "./utils";
 
 function Snowflakes() {
   const [flakes, setFlakes] = useState<
@@ -38,11 +38,26 @@ function Snowflakes() {
   );
 }
 
+// Simple QR code component using Google Charts API
+function QRCode({ url }: { url: string }) {
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+  return (
+    <div className="bg-white p-3 rounded-xl inline-block">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={qrUrl} alt="QR Code" className="w-40 h-40" />
+    </div>
+  );
+}
+
 export default function QuizMaster() {
   const [currentRound, setCurrentRound] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [view, setView] = useState<"home" | "quiz">("home");
+
+  const playerUrl = typeof window !== "undefined"
+    ? `${window.location.origin}${basePath}/player`
+    : "https://nikhilwoodruff.github.io/quiz/player";
 
   const round = rounds[currentRound];
   const question = round?.questions[currentQuestion];
@@ -80,13 +95,19 @@ export default function QuizMaster() {
       <main className="min-h-screen p-8 relative">
         <Snowflakes />
         <div className="max-w-2xl mx-auto relative z-10">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h1 className="text-5xl font-bold mb-4 text-[#ffd700]">
               🎄 Christmas quiz 2024 🎄
             </h1>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-gray-300 mb-6">
               Merry Christmas! Select a round to begin.
             </p>
+
+            {/* QR Code for players */}
+            <div className="mb-6">
+              <p className="text-gray-400 mb-3">Scan to play on your phone:</p>
+              <QRCode url={playerUrl} />
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -117,20 +138,11 @@ export default function QuizMaster() {
                     {index === 2 && "📚"}
                     {index === 3 && "🎬"}
                     {index === 4 && "📍"}
-                    {index === 5 && "🖼️"}
+                    {index === 5 && "🔍"}
                   </span>
                 </div>
               </button>
             ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link
-              href="/player"
-              className="inline-block px-6 py-3 rounded-lg bg-[#ffd700] text-[#0c1821] font-semibold hover:bg-[#ffed4a] transition-colors"
-            >
-              📱 Open player view (play on your phone)
-            </Link>
           </div>
         </div>
       </main>
@@ -172,7 +184,7 @@ export default function QuizMaster() {
             <div className="mb-6 flex justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={question.image}
+                src={getImagePath(question.image)}
                 alt="Question image"
                 className="max-h-64 rounded-xl shadow-lg object-contain"
               />
@@ -183,36 +195,13 @@ export default function QuizMaster() {
             {question?.question}
           </h3>
 
-          {question?.images && (
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              {question.images.map((img, i) => (
-                <div
-                  key={i}
-                  className={`p-3 rounded-xl text-center transition-all ${
-                    showAnswer && img.label === question.answer
-                      ? "bg-green-600 ring-4 ring-green-400"
-                      : "bg-white/10"
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={img.url}
-                    alt={img.label}
-                    className="w-full h-32 object-cover rounded-lg mb-2"
-                  />
-                  <span className="font-medium">{img.label}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
           {question?.options && (
             <div className="grid grid-cols-2 gap-4 mb-8">
               {question.options.map((option, i) => (
                 <div
                   key={i}
                   className={`p-4 rounded-xl text-center transition-all ${
-                    showAnswer && option === question.answer
+                    showAnswer && question.answer.startsWith(option)
                       ? "bg-green-600 ring-4 ring-green-400"
                       : "bg-white/10"
                   }`}

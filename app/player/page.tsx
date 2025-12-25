@@ -4,6 +4,7 @@ import { useState } from "react";
 import { rounds } from "../data";
 import Link from "next/link";
 import WorldMap, { calculateDistance, calculateGeoPoints } from "../components/WorldMap";
+import { getImagePath } from "../utils";
 
 const TEAMS = [
   "Nya and Gramps",
@@ -349,7 +350,7 @@ export default function PlayerView() {
           <div className="flex items-center justify-center mb-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={question.image}
+              src={getImagePath(question.image)}
               alt="Question"
               className="max-h-32 rounded-xl shadow-lg object-contain"
             />
