@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@source "../app";
+
+:root {
+  --background: #0c1821;
+  --foreground: #f0f4f8;
+  --christmas-red: #c41e3a;
+  --christmas-green: #1a472a;
+  --christmas-gold: #ffd700;
+  --card-bg: #1a2a3a;
+}
+
+body {
+  background: linear-gradient(135deg, var(--background) 0%, #1a2a3a 100%);
+  color: var(--foreground);
+  font-family: "Georgia", serif;
+  min-height: 100vh;
+}
+
+.snowflake {
+  position: fixed;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.5rem;
+  pointer-events: none;
+  animation: fall linear infinite;
+  z-index: 0;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0.3;
+  }
+}
