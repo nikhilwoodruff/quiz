@@ -26,18 +26,17 @@ export default function WorldMap({
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
 
-    const lng = (x - 0.5) * 360;
-    const lat = (0.5 - y) * 180;
-
-    // Debug: show clicked coordinates
-    alert(`Clicked: lat=${lat.toFixed(2)}, lng=${lng.toFixed(2)}\nRaw: x=${x.toFixed(4)}, y=${y.toFixed(4)}`);
+    // Calibrated for the world map image
+    const lng = (x - 0.5) * 360 + 12.5;
+    const lat = (0.5 - y) * 101.7 + 21.6;
 
     onSelect(lat, lng);
   };
 
   const toPixel = (lat: number, lng: number) => {
-    const x = ((lng + 180) / 360) * 100;
-    const y = ((90 - lat) / 180) * 100;
+    // Inverse of the calibrated transform
+    const x = ((lng - 12.5) / 360 + 0.5) * 100;
+    const y = (0.5 - (lat - 21.6) / 101.7) * 100;
     return { x, y };
   };
 
