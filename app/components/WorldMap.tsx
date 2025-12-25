@@ -29,6 +29,9 @@ export default function WorldMap({
     const lng = (x - 0.5) * 360;
     const lat = (0.5 - y) * 180;
 
+    // Debug: show clicked coordinates
+    alert(`Clicked: lat=${lat.toFixed(2)}, lng=${lng.toFixed(2)}\nRaw: x=${x.toFixed(4)}, y=${y.toFixed(4)}`);
+
     onSelect(lat, lng);
   };
 
